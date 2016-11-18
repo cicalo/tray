@@ -21,7 +21,7 @@ public class SimpleHidIO implements DeviceIO {
 
     public SimpleHidIO(HidDeviceInfo deviceInfo) throws DeviceException {
         if (deviceInfo == null) {
-            throw new DeviceException("HID deviceInfo could not be found");
+            throw new DeviceException("HID device could not be found");
         }
 
         this.deviceInfo = deviceInfo;
@@ -62,7 +62,7 @@ public class SimpleHidIO implements DeviceIO {
 
         int read = device.setFeatureReport(response, responseSize);
         if (read == -1) {
-            throw new DeviceException("Failed to read from deviceInfo");
+            throw new DeviceException("Failed to read from device");
         }
 
         return response;
@@ -73,7 +73,7 @@ public class SimpleHidIO implements DeviceIO {
 
         int wrote = device.setOutputReport(reportId, data, data.length);
         if (wrote == -1) {
-            throw new DeviceException("Failed to write to deviceInfo");
+            throw new DeviceException("Failed to write to device");
         }
     }
 
