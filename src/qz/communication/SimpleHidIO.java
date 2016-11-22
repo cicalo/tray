@@ -2,6 +2,7 @@ package qz.communication;
 
 import purejavahidapi.HidDevice;
 import purejavahidapi.HidDeviceInfo;
+import purejavahidapi.InputReportListener;
 import purejavahidapi.PureJavaHidApi;
 
 import javax.usb.util.UsbUtil;
@@ -12,6 +13,7 @@ public class SimpleHidIO implements DeviceIO {
     private HidDeviceInfo deviceInfo;
     private HidDevice device;
 
+    private byte[] latestData;
     private boolean streaming;
 
 
@@ -31,6 +33,12 @@ public class SimpleHidIO implements DeviceIO {
         if (!isOpen()) {
             try {
                 device = PureJavaHidApi.openDevice(deviceInfo);
+                device.setInputReportListener(new InputReportListener() {
+                    @Override
+                    public void onInputReport(HidDevice source, byte id, byte[] data, int len) {
+                        latestData = data;
+                    }
+                });
             } catch (IOException ex) {
                 throw new DeviceException(ex);
             }
@@ -59,12 +67,7 @@ public class SimpleHidIO implements DeviceIO {
 
     public byte[] readData(int responseSize, Byte unused) throws DeviceException {
         byte[] response = new byte[responseSize];
-
-        int read = device.setFeatureReport(response, responseSize);
-        if (read == -1) {
-            throw new DeviceException("Failed to read from device");
-        }
-
+        System.arraycopy(latestData, 0, response, 1, Math.min(responseSize-1, latestData.length));
         return response;
     }
 
@@ -79,6 +82,7 @@ public class SimpleHidIO implements DeviceIO {
 
     public void close() {
         if (isOpen()) {
+            device.setInputReportListener(null);
             device.close();
         }
     }
