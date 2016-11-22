@@ -4,6 +4,7 @@ import purejavahidapi.HidDevice;
 import purejavahidapi.HidDeviceInfo;
 import purejavahidapi.InputReportListener;
 import purejavahidapi.PureJavaHidApi;
+import qz.utils.SystemUtilities;
 
 import javax.usb.util.UsbUtil;
 import java.io.IOException;
@@ -67,7 +68,12 @@ public class SimpleHidIO implements DeviceIO {
 
     public byte[] readData(int responseSize, Byte unused) throws DeviceException {
         byte[] response = new byte[responseSize];
-        System.arraycopy(latestData, 0, response, 1, Math.min(responseSize-1, latestData.length));
+        if (SystemUtilities.isWindows()) {
+            //windows missing the leading byte
+            System.arraycopy(latestData, 0, response, 1, Math.min(responseSize-1, latestData.length));
+        } else {
+            System.arraycopy(latestData, 0, response, 0, Math.min(responseSize-1, latestData.length));
+        }
         return response;
     }
 
@@ -85,6 +91,7 @@ public class SimpleHidIO implements DeviceIO {
             device.setInputReportListener(null);
             device.close();
         }
+        streaming = false;
     }
 
 }
