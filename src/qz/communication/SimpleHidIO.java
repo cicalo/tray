@@ -68,6 +68,8 @@ public class SimpleHidIO implements DeviceIO {
 
     public byte[] readData(int responseSize, Byte unused) throws DeviceException {
         byte[] response = new byte[responseSize];
+        if (latestData == null)
+            return new byte[0]; //no data received yet
         if (SystemUtilities.isWindows()) {
             //windows missing the leading byte
             System.arraycopy(latestData, 0, response, 1, Math.min(responseSize-1, latestData.length));
