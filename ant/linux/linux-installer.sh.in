@@ -200,8 +200,14 @@ which sudo > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     progress_dialog 100 "Finished.  Please launch ${project.name} manually."
 else
+    # Allow Java process to detect proper L&F
+    mask="$(umask)"
+    umask 0337
+    echo "Defaults env_keep+=GNOME_DESKTOP_SESSION_ID" > "/etc/sudoers.d/${project.filename}"
+    umask "$mask"
     # Start ${project.name} as the user that's logged in
-    sudo -u $(logname 2>/dev/null || echo $SUDO_USER) nohup "java" -jar ${launch.opts} "${jarfile}" > /dev/null 2>&1 &
+    sudo -u $(logname 2>/dev/null || echo $SUDO_USER) -i nohup "java" -jar ${launch.opts} "${jarfile}" > /dev/null 2>&1 &
+    # rm -f "/etc/sudoers.d/${project.filename}"
     progress_dialog 100 "Finished.  ${project.name} should start automatically."
 fi
 echo
