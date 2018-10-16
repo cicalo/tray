@@ -159,7 +159,7 @@ public class BasicDialog extends JDialog {
     public void setVisible(boolean b) {
         super.setVisible(b);
         if (SystemUtilities.isMac() && !GraphicsEnvironment.isHeadless()) {
-            ShellUtilities.executeAppleScript("tell me to activate");
+            ShellUtilities.runAppleScript("tell me to activate");
         }
     }
 }

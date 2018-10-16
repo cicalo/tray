@@ -16,6 +16,9 @@ import org.slf4j.LoggerFactory;
 import qz.deploy.DeployUtilities;
 
 import javax.print.attribute.standard.PrinterResolution;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
@@ -259,6 +262,22 @@ public class ShellUtilities {
         }
 
         return execute(new String[] {"osascript", "-e", scriptBody});
+    }
+
+    public static boolean runAppleScript(String scriptBody) {
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("AppleScript");
+
+        if (engine != null) {
+            try {
+                engine.eval(scriptBody);
+                return true;
+            }
+            catch(ScriptException e) {
+                log.warn("Exception running script {}", scriptBody, e);
+            }
+        }
+        return false;
     }
 
     /**

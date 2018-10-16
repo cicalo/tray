@@ -32,6 +32,7 @@ import qz.common.Constants;
 import qz.common.SecurityInfo;
 import qz.common.TrayManager;
 import qz.deploy.DeployUtilities;
+import qz.utils.ShellUtilities;
 import qz.utils.SystemUtilities;
 
 import javax.swing.*;
@@ -61,6 +62,7 @@ public class PrintSocketServer {
 
 
     public static void main(String[] args) {
+        ShellUtilities.runAppleScript("tell me to activate");
         for(String s : args) {
             // Print version information and exit
             if ("-v".equals(s) || "--version".equals(s)) {
