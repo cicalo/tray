@@ -62,7 +62,6 @@ public class PrintSocketServer {
 
 
     public static void main(String[] args) {
-        ShellUtilities.runAppleScript("tell me to activate");
         for(String s : args) {
             // Print version information and exit
             if ("-v".equals(s) || "--version".equals(s)) {
