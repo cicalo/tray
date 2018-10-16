@@ -159,7 +159,6 @@ public class BasicDialog extends JDialog {
 
         // fix window focus on macOS
         if (SystemUtilities.isMac() && !GraphicsEnvironment.isHeadless()) {
-            // delay is necessary to avoid race condition
             ShellUtilities.executeAppleScript("delay 0.1");
             ShellUtilities.executeAppleScript("tell application \"" + Constants.ABOUT_TITLE + "\" to activate");
         }
