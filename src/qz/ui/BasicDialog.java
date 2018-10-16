@@ -71,16 +71,6 @@ public class BasicDialog extends JDialog {
         pack();
 
         setLocationRelativeTo(null);    // center on main display
-
-        // Fix dialog focus on MacOS
-        addWindowStateListener(new WindowStateListener() {
-            @Override
-            public void windowStateChanged(WindowEvent windowEvent) {
-                if (windowEvent.getNewState() == WindowEvent.WINDOW_OPENED && SystemUtilities.isMac() && !GraphicsEnvironment.isHeadless()) {
-                    ShellUtilities.executeAppleScript("tell application \"" + Constants.ABOUT_TITLE + "\" to activate");
-                }
-            }
-        });
     }
 
     public JLabel setHeader(String header) {
@@ -161,5 +151,17 @@ public class BasicDialog extends JDialog {
             return iconCache.getIcon(icon);
         }
         return null;
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        super.setVisible(b);
+
+        // fix window focus on macOS
+        if (SystemUtilities.isMac() && !GraphicsEnvironment.isHeadless()) {
+            // delay is necessary to avoid race condition
+            ShellUtilities.executeAppleScript("delay 0.1");
+            ShellUtilities.executeAppleScript("tell application \"" + Constants.ABOUT_TITLE + "\" to activate");
+        }
     }
 }
