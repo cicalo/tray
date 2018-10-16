@@ -7,9 +7,7 @@ import qz.utils.SystemUtilities;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -73,6 +71,16 @@ public class BasicDialog extends JDialog {
         pack();
 
         setLocationRelativeTo(null);    // center on main display
+
+        // Fix dialog focus on MacOS
+        addWindowStateListener(new WindowStateListener() {
+            @Override
+            public void windowStateChanged(WindowEvent windowEvent) {
+                if (windowEvent.getNewState() == WindowEvent.WINDOW_OPENED && SystemUtilities.isMac() && !GraphicsEnvironment.isHeadless()) {
+                    ShellUtilities.executeAppleScript("tell application \"" + Constants.ABOUT_TITLE + "\" to activate");
+                }
+            }
+        });
     }
 
     public JLabel setHeader(String header) {
@@ -153,13 +161,5 @@ public class BasicDialog extends JDialog {
             return iconCache.getIcon(icon);
         }
         return null;
-    }
-
-    @Override
-    public void setVisible(boolean b) {
-        super.setVisible(b);
-        if (SystemUtilities.isMac() && !GraphicsEnvironment.isHeadless()) {
-            ShellUtilities.executeAppleScript("tell application \"" + Constants.ABOUT_TITLE + "\" to activate");
-        }
     }
 }
